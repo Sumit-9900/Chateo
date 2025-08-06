@@ -29,6 +29,20 @@ class ProfileModel {
     };
   }
 
+  ProfileModel copyWith({
+    String? phoneNumber,
+    String? profileImage,
+    String? firstName,
+    String? lastName,
+  }) {
+    return ProfileModel(
+      phoneNumber: phoneNumber ?? this.phoneNumber,
+      profileImage: profileImage ?? this.profileImage,
+      firstName: firstName ?? this.firstName,
+      lastName: lastName ?? this.lastName,
+    );
+  }
+
   @override
   String toString() {
     return 'ProfileModel(phoneNumber: $phoneNumber, profileImage: $profileImage, firstName: $firstName, lastName: $lastName)';

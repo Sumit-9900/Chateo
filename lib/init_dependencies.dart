@@ -31,7 +31,9 @@ Future<void> initDependencies() async {
     () => AuthLocalRepositoryImpl(sharedPreferences),
   );
 
-  getIt.registerFactory<ContactsRepository>(() => ContactsRepositoryImpl());
+  getIt.registerFactory<ContactsRepository>(
+    () => ContactsRepositoryImpl(firestore: firestore),
+  );
 
   // Cubit
   getIt.registerLazySingleton(() => PhoneAuthCubit(getIt()));

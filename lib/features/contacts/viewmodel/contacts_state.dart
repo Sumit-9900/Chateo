@@ -23,12 +23,12 @@ class ContactsPermissionRequested extends ContactsState {
 }
 
 class ContactsLoaded extends ContactsState {
-  final List<ContactModel> contacts;
+  final ContactModel contact;
 
-  const ContactsLoaded({required this.contacts});
+  const ContactsLoaded({required this.contact});
 
   @override
-  List<Object?> get props => [contacts];
+  List<Object?> get props => [contact];
 }
 
 class ContactsError extends ContactsState {

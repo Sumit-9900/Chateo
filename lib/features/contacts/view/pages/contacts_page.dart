@@ -65,7 +65,7 @@ class _ContactsPageState extends State<ContactsPage> {
         );
       }
     } else if (state is ContactsLoaded) {
-      return _buildContactsList(context, state.contacts);
+      return _buildContactsList(context, state.contact);
     } else if (state is ContactsError) {
       return ContactsEmptyWidget(
         message: 'Error: ${state.message}',
@@ -80,7 +80,80 @@ class _ContactsPageState extends State<ContactsPage> {
     return const ContactsEmptyWidget(message: 'Something went wrong');
   }
 
-  Widget _buildContactsList(BuildContext context, List<ContactModel> contacts) {
+  Widget _buildContactsList(BuildContext context, ContactModel contact) {
+    final matchedContacts = contact.matched;
+    final notRegisteredContacts = contact.notRegistered;
+
+    return GestureDetector(
+      onTap: () => searchFocusNode.unfocus(),
+      child: Column(
+        children: [
+          SearchField(
+            controller: searchController,
+            focusNode: searchFocusNode,
+            onChanged: (value) {
+              // Future search logic
+              context.read<ContactsCubit>().searchContacts(value.trim());
+            },
+          ),
+          Expanded(
+            child: Scrollbar(
+              thumbVisibility: true,
+              interactive: true,
+              thickness: 12,
+              radius: const Radius.circular(12),
+              child: ListView(
+                children: [
+                  if (matchedContacts.isNotEmpty) ...[
+                    const Padding(
+                      padding: EdgeInsets.only(top: 8, left: 16, right: 16),
+                      child: Text(
+                        'Contacts on Chateo',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                    ...matchedContacts.map((contact) {
+                      return ContactItem(
+                        matchedContact: contact,
+                        isMatched: true,
+                      );
+                    }),
+                  ],
+                  if (notRegisteredContacts.isNotEmpty) ...[
+                    const Padding(
+                      padding: EdgeInsets.only(top: 8, left: 16, right: 16),
+                      child: Text(
+                        'Invite to Chateo',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                    ...notRegisteredContacts.map((contact) {
+                      return ContactItem(
+                        inviteContact: contact,
+                        isMatched: false,
+                      );
+                    }),
+                  ],
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /*
+  Widget _buildContactsList(BuildContext context, ContactModel contact) {
+    final matchedContacts = contact.matched;
+    final notRegisteredContacts = contact.notRegistered;
+
     return GestureDetector(
       onTap: () => searchFocusNode.unfocus(),
       child: Column(
@@ -90,28 +163,68 @@ class _ContactsPageState extends State<ContactsPage> {
             focusNode: searchFocusNode,
             onChanged: (value) {
               // Handle search
-              context.read<ContactsCubit>().searchContacts(value);
+              // context.read<ContactsCubit>().searchContacts(value);
             },
           ),
           Expanded(
-            child: contacts.isEmpty
+            child: matchedContacts.isEmpty
                 ? const ContactsEmptyWidget(message: 'No contacts found!')
-                : Scrollbar(
-                    thumbVisibility: true,
-                    interactive: true,
-                    thickness: 12,
-                    radius: const Radius.circular(12),
-                    child: ListView.builder(
-                      itemCount: contacts.length,
-                      itemBuilder: (context, index) {
-                        final contact = contacts[index];
-                        return ContactItem(contact: contact, onTap: () {});
-                      },
-                    ),
+                : Column(
+                    children: [
+                      Text(
+                        'Contacts on Chateo',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      Scrollbar(
+                        thumbVisibility: true,
+                        interactive: true,
+                        thickness: 12,
+                        radius: const Radius.circular(12),
+                        child: ListView.builder(
+                          itemCount: matchedContacts.length,
+                          itemBuilder: (context, index) {
+                            final contact = matchedContacts[index];
+                            return ContactItem(
+                              matchedContact: contact,
+                              onTap: () {},
+                              isMatched: true,
+                            );
+                          },
+                        ),
+                      ),
+                    ],
                   ),
+          ),
+          const SizedBox(height: 12),
+          Text(
+            'Invite to Chateo',
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+          ),
+          const SizedBox(height: 12),
+          Scrollbar(
+            thumbVisibility: true,
+            interactive: true,
+            thickness: 12,
+            radius: const Radius.circular(12),
+            child: ListView.builder(
+              itemCount: notRegisteredContacts.length,
+              itemBuilder: (context, index) {
+                final contact = notRegisteredContacts[index];
+                return ContactItem(
+                  inviteContact: contact,
+                  onTap: () {},
+                  isMatched: false,
+                );
+              },
+            ),
           ),
         ],
       ),
     );
   }
+  */
 }

@@ -1,4 +1,6 @@
+import 'package:chateo_app/features/contacts/model/chat_contact_model.dart';
 import 'package:chateo_app/features/contacts/model/contact_model.dart';
+import 'package:chateo_app/features/contacts/model/invite_contact_model.dart';
 import 'package:chateo_app/features/contacts/repository/contacts_repository.dart';
 import 'package:chateo_app/features/contacts/viewmodel/contacts_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -6,7 +8,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class ContactsCubit extends Cubit<ContactsState> {
   final ContactsRepository _repository;
 
-  List<ContactModel> allContacts = [];
+  ContactModel allContacts = ContactModel(matched: [], notRegistered: []);
 
   ContactsCubit({required ContactsRepository repository})
     : _repository = repository,
@@ -34,31 +36,47 @@ class ContactsCubit extends Cubit<ContactsState> {
       return;
     }
 
-    final result = await _repository.getContacts();
+    final result = await _repository.getContacts('');
 
-    result.fold((error) => emit(ContactsError(message: error)), (contacts) {
-      allContacts = contacts;
-      emit(ContactsLoaded(contacts: contacts));
+    result.fold((error) => emit(ContactsError(message: error)), (contact) {
+      allContacts = contact;
+      emit(ContactsLoaded(contact: contact));
     });
   }
 
   void searchContacts(String query) async {
     if (query.isEmpty) {
-      emit(ContactsLoaded(contacts: allContacts));
+      emit(ContactsLoaded(contact: allContacts));
       return;
     }
 
-    final filtered = allContacts.where((contact) {
-      final name = contact.displayName.toLowerCase();
+    final List<dynamic> contacts = [
+      ...allContacts.matched,
+      ...allContacts.notRegistered,
+    ];
+
+    final filtered = contacts.where((contact) {
+      final name = contact.name.toLowerCase();
       final number = (contact.phoneNumber ?? '').toLowerCase();
       final q = query.toLowerCase();
       return name.contains(q) || number.contains(q);
     }).toList();
 
     if (filtered.isEmpty) {
-      emit(const ContactsLoaded(contacts: []));
+      emit(
+        ContactsLoaded(
+          contact: ContactModel(matched: [], notRegistered: []),
+        ),
+      );
     } else {
-      emit(ContactsLoaded(contacts: filtered));
+      emit(
+        ContactsLoaded(
+          contact: ContactModel(
+            matched: filtered.whereType<ChatContactModel>().toList(),
+            notRegistered: filtered.whereType<InviteContactModel>().toList(),
+          ),
+        ),
+      );
     }
   }
 }
