@@ -1,3 +1,4 @@
+import 'package:chateo_app/core/utils/normalize_phone_number.dart';
 import 'package:chateo_app/features/contacts/model/chat_contact_model.dart';
 import 'package:chateo_app/features/contacts/model/contact_model.dart';
 import 'package:chateo_app/features/contacts/model/invite_contact_model.dart';
@@ -13,9 +14,7 @@ abstract class ContactsRepository {
   Future<bool> hasContactsPermission();
 
   /// Fetch all contacts from the device
-  Future<Either<String, ContactModel>> getContacts(
-    String currentUserPhoneNumber,
-  );
+  Future<Either<String, ContactModel>> getContacts();
 }
 
 class ContactsRepositoryImpl implements ContactsRepository {
@@ -43,9 +42,7 @@ class ContactsRepositoryImpl implements ContactsRepository {
   }
 
   @override
-  Future<Either<String, ContactModel>> getContacts(
-    String currentUserPhoneNumber,
-  ) async {
+  Future<Either<String, ContactModel>> getContacts() async {
     try {
       // Check if we have permission first
       final hasPermission = await FlutterContacts.requestPermission();
@@ -61,7 +58,7 @@ class ContactsRepositoryImpl implements ContactsRepository {
 
       final snapshot = await firestore.collection('users').get();
       final phoneNumbers = snapshot.docs
-          .map((doc) => doc['phoneNumber'].toString())
+          .map((doc) => normalizePhoneNumber(doc['phoneNumber'].toString()))
           .toSet();
 
       List<ChatContactModel> matched = [];
@@ -70,18 +67,10 @@ class ContactsRepositoryImpl implements ContactsRepository {
       for (final contact in contacts) {
         if (contact.phones.isEmpty) continue;
 
-        final phoneNumber = contact.phones.first.number;
+        final phoneNumber = normalizePhoneNumber(contact.phones.first.number);
         // print('phoneNumber: $phoneNumber');
 
-        if (phoneNumber == currentUserPhoneNumber) {
-          matched.add(
-            ChatContactModel(
-              name: 'You',
-              phoneNumber: phoneNumber,
-              isSelf: true,
-            ),
-          );
-        } else if (phoneNumbers.contains(phoneNumber)) {
+        if (phoneNumbers.contains(phoneNumber)) {
           matched.add(
             ChatContactModel(
               name: contact.displayName,

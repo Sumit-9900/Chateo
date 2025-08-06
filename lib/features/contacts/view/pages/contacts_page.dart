@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:chateo_app/core/widgets/loader.dart';
 import 'package:chateo_app/core/widgets/search_field.dart';
 import 'package:chateo_app/features/contacts/model/contact_model.dart';
@@ -83,6 +85,9 @@ class _ContactsPageState extends State<ContactsPage> {
   Widget _buildContactsList(BuildContext context, ContactModel contact) {
     final matchedContacts = contact.matched;
     final notRegisteredContacts = contact.notRegistered;
+
+    log('matchedContacts: $matchedContacts');
+    log('notRegisteredContacts: $notRegisteredContacts');
 
     return GestureDetector(
       onTap: () => searchFocusNode.unfocus(),
