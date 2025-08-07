@@ -6,7 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 
-abstract class ContactsRepository {
+abstract class ContactsLocalRepository {
   /// Request contacts permission from the user
   Future<Either<String, bool>> requestContactsPermission();
 
@@ -17,9 +17,9 @@ abstract class ContactsRepository {
   Future<Either<String, ContactModel>> getContacts();
 }
 
-class ContactsRepositoryImpl implements ContactsRepository {
+class ContactsLocalRepositoryImpl implements ContactsLocalRepository {
   final FirebaseFirestore firestore;
-  ContactsRepositoryImpl({required this.firestore});
+  ContactsLocalRepositoryImpl({required this.firestore});
 
   @override
   Future<Either<String, bool>> requestContactsPermission() async {

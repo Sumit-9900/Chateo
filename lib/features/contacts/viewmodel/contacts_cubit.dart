@@ -1,16 +1,16 @@
 import 'package:chateo_app/features/contacts/model/chat_contact_model.dart';
 import 'package:chateo_app/features/contacts/model/contact_model.dart';
 import 'package:chateo_app/features/contacts/model/invite_contact_model.dart';
-import 'package:chateo_app/features/contacts/repository/contacts_repository.dart';
+import 'package:chateo_app/features/contacts/repository/contacts_local_repository.dart';
 import 'package:chateo_app/features/contacts/viewmodel/contacts_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ContactsCubit extends Cubit<ContactsState> {
-  final ContactsRepository _repository;
+  final ContactsLocalRepository _repository;
   ContactModel allContacts = ContactModel(matched: [], notRegistered: []);
 
   ContactsCubit({
-    required ContactsRepository repository,
+    required ContactsLocalRepository repository,
   })
     : _repository = repository,
       super(ContactsInitial());

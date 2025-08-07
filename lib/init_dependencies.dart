@@ -3,7 +3,7 @@ import 'package:chateo_app/features/auth/repository/auth_remote_repository.dart'
 import 'package:chateo_app/features/auth/viewmodel/phone_auth_cubit.dart';
 import 'package:chateo_app/features/auth/viewmodel/profile_cubit.dart';
 import 'package:chateo_app/features/auth/viewmodel/profile_image_cubit.dart';
-import 'package:chateo_app/features/contacts/repository/contacts_repository.dart';
+import 'package:chateo_app/features/contacts/repository/contacts_local_repository.dart';
 import 'package:chateo_app/features/contacts/viewmodel/contacts_cubit.dart';
 import 'package:chateo_app/features/home/viewmodel/cubit/home_cubit.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -31,8 +31,8 @@ Future<void> initDependencies() async {
     () => AuthLocalRepositoryImpl(sharedPreferences),
   );
 
-  getIt.registerFactory<ContactsRepository>(
-    () => ContactsRepositoryImpl(firestore: firestore),
+  getIt.registerFactory<ContactsLocalRepository>(
+    () => ContactsLocalRepositoryImpl(firestore: firestore),
   );
 
   // Cubit
