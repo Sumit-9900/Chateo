@@ -43,6 +43,7 @@ class _PhonePageState extends State<PhonePage> {
             RouteConstants.otp,
             extra: '$countryCode-${phoneController.text.trim()}',
           );
+          // print('phone number 1: $countryCode-${phoneController.text.trim()}');
         } else if (state is PhoneAuthFailure) {
           showSnackBar(context, message: '${state.error}!', color: Colors.red);
         }

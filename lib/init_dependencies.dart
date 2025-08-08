@@ -3,6 +3,8 @@ import 'package:chateo_app/features/auth/repository/auth_remote_repository.dart'
 import 'package:chateo_app/features/auth/viewmodel/phone_auth_cubit.dart';
 import 'package:chateo_app/features/auth/viewmodel/profile_cubit.dart';
 import 'package:chateo_app/features/auth/viewmodel/profile_image_cubit.dart';
+import 'package:chateo_app/features/chats/repository/chats_remote_repository.dart';
+import 'package:chateo_app/features/chats/viewmodel/cubit/chats_cubit.dart';
 import 'package:chateo_app/features/contacts/repository/contacts_local_repository.dart';
 import 'package:chateo_app/features/contacts/viewmodel/contacts_cubit.dart';
 import 'package:chateo_app/features/home/viewmodel/cubit/home_cubit.dart';
@@ -35,6 +37,10 @@ Future<void> initDependencies() async {
     () => ContactsLocalRepositoryImpl(firestore: firestore),
   );
 
+  getIt.registerFactory<ChatsRemoteRepository>(
+    () => ChatsRemoteRepositoryImpl(firestore: firestore),
+  );
+
   // Cubit
   getIt.registerLazySingleton(() => PhoneAuthCubit(getIt()));
   getIt.registerLazySingleton(() => ProfileImageCubit());
@@ -43,4 +49,5 @@ Future<void> initDependencies() async {
   );
   getIt.registerLazySingleton(() => HomeCubit());
   getIt.registerLazySingleton(() => ContactsCubit(repository: getIt()));
+  getIt.registerFactory(() => ChatsCubit(chatsRemoteRepository: getIt()));
 }

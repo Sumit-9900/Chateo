@@ -1,9 +1,11 @@
+import 'package:chateo_app/core/router/route_constants.dart';
 import 'package:chateo_app/core/theme/app_colors.dart';
 import 'package:chateo_app/core/utils/send_invite_sms.dart';
 import 'package:chateo_app/core/utils/show_snackbar.dart';
 import 'package:chateo_app/features/contacts/model/chat_contact_model.dart';
 import 'package:chateo_app/features/contacts/model/invite_contact_model.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class ContactItem extends StatelessWidget {
   final ChatContactModel? matchedContact;
@@ -38,7 +40,12 @@ class ContactItem extends StatelessWidget {
       ),
       // onTap: onTap,
       trailing: isMatched
-          ? IconButton(onPressed: () {}, icon: const Icon(Icons.send))
+          ? IconButton(
+              onPressed: () {
+                context.pushNamed(RouteConstants.chat, extra: matchedContact);
+              },
+              icon: const Icon(Icons.send),
+            )
           : TextButton(
               onPressed: () async {
                 try {

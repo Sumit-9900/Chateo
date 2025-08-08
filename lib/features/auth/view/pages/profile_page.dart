@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:chateo_app/core/router/route_constants.dart';
 import 'package:chateo_app/core/utils/show_snackbar.dart';
-import 'package:chateo_app/features/auth/view/widgets/input_field.dart';
+import 'package:chateo_app/core/widgets/input_field.dart';
 import 'package:chateo_app/features/auth/viewmodel/profile_cubit.dart';
 import 'package:chateo_app/features/auth/viewmodel/profile_image_cubit.dart';
 import 'package:flutter/material.dart';
@@ -45,6 +45,7 @@ class _ProfilePageState extends State<ProfilePage> {
             color: Colors.green,
           );
           context.goNamed(RouteConstants.home);
+          // print('phone number 3: ${widget.phoneNumber}');
         } else if (state is ProfileFailure) {
           showSnackBar(
             context,

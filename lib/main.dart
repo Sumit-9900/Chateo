@@ -1,6 +1,7 @@
 import 'package:chateo_app/features/auth/viewmodel/phone_auth_cubit.dart';
 import 'package:chateo_app/features/auth/viewmodel/profile_cubit.dart';
 import 'package:chateo_app/features/auth/viewmodel/profile_image_cubit.dart';
+import 'package:chateo_app/features/chats/viewmodel/cubit/chats_cubit.dart';
 import 'package:chateo_app/features/contacts/viewmodel/contacts_cubit.dart';
 import 'package:chateo_app/init_dependencies.dart';
 import 'package:flutter/material.dart';
@@ -39,6 +40,7 @@ void main() async {
         ),
         BlocProvider<ProfileCubit>(create: (_) => getIt<ProfileCubit>()),
         BlocProvider<ContactsCubit>(create: (_) => getIt<ContactsCubit>()),
+        BlocProvider<ChatsCubit>(create: (_) => getIt<ChatsCubit>()),
       ],
       child: const MyApp(),
     ),

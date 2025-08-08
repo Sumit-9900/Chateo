@@ -37,9 +37,10 @@ class ProfileCubit extends Cubit<ProfileState> {
       ) async {
         try {
           await _localRepository.setAuthenticatedStatus();
+          await _localRepository.setPhoneNumber(phoneNumber);
           emit(const ProfileSuccess());
         } catch (e) {
-          emit(ProfileFailure('Failed to save auth status: ${e.toString()}'));
+          emit(ProfileFailure(e.toString()));
         }
       });
     } catch (e) {

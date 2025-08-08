@@ -89,7 +89,11 @@ class _OtpPageState extends State<OtpPage> {
               message: 'Successfully verified!',
               color: Colors.green,
             );
-            context.pushNamed(RouteConstants.profile, extra: widget.phoneNumber);
+            context.pushNamed(
+              RouteConstants.profile,
+              extra: widget.phoneNumber,
+            );
+            // print('phone number 2: ${widget.phoneNumber}');
           } else if (state is PhoneAuthFailure) {
             showSnackBar(context, message: state.error, color: Colors.red);
             pinController.clear();
