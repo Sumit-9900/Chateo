@@ -8,10 +8,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class ContactsCubit extends Cubit<ContactsState> {
   final ContactsLocalRepository _repository;
   ContactModel allContacts = ContactModel(matched: [], notRegistered: []);
-
-  ContactsCubit({
-    required ContactsLocalRepository repository,
-  })
+  ContactsCubit({required ContactsLocalRepository repository})
     : _repository = repository,
       super(ContactsInitial());
 
