@@ -6,7 +6,7 @@ class AppColors {
   static const Color background = Color(0xFFFFFFFF);
   static const Color textPrimary = Color(0xFF0F1828);
   static const Color textSecondary = Color(0xFFA4A4A4);
-  
+
   // Walkthrough colors
   static const Color walkthroughBackground = Color(0xFFF7F7FC);
   static const Color walkthroughCircleBg = Color(0xFFDFE5FF);

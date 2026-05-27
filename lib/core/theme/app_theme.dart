@@ -13,10 +13,7 @@ class AppTheme {
     ),
     scaffoldBackgroundColor: AppColors.background,
     bottomNavigationBarTheme: BottomNavigationBarThemeData(
-      selectedLabelStyle: TextStyle(
-        fontSize: 12,
-        fontWeight: FontWeight.w600,
-      ),
+      selectedLabelStyle: TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
       unselectedLabelStyle: TextStyle(
         fontSize: 12,
         fontWeight: FontWeight.w600,
