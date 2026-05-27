@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:chateo_app/core/utils/generate_chat_id.dart';
 import 'package:chateo_app/features/chats/models/message_model.dart';
@@ -22,6 +23,24 @@ class ChatsCubit extends Cubit<ChatsState> {
 
     result.fold((failure) => emit(ChatsFailure(failure.message)), (success) {
       final chatId = generateChatId(message.senderId, message.receiverId);
+      emit(ChatsSuccess());
+      return getMessages(chatId: chatId);
+    });
+  }
+
+  Future<void> sendImageMessage({
+    required File imageFile,
+    required String senderId,
+    required String receiverId,
+  }) async {
+    final result = await _chatsRemoteRepository.sendImageMessage(
+      imageFile: imageFile,
+      senderId: senderId,
+      receiverId: receiverId,
+    );
+
+    result.fold((failure) => emit(ChatsFailure(failure.message)), (success) {
+      final chatId = generateChatId(senderId, receiverId);
       emit(ChatsSuccess());
       return getMessages(chatId: chatId);
     });

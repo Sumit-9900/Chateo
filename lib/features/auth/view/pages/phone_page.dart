@@ -18,7 +18,7 @@ class PhonePage extends StatefulWidget {
 class _PhonePageState extends State<PhonePage> {
   final phoneController = TextEditingController();
   final phoneFocusNode = FocusNode();
-  String? countryCode;
+  String countryCode = '+91';
 
   @override
   void dispose() {
@@ -41,7 +41,7 @@ class _PhonePageState extends State<PhonePage> {
           );
           context.pushNamed(
             RouteConstants.otp,
-            extra: '$countryCode-${phoneController.text.trim()}',
+            extra: '$countryCode${phoneController.text.trim()}',
           );
           // print('phone number 1: $countryCode-${phoneController.text.trim()}');
         } else if (state is PhoneAuthFailure) {

@@ -1,3 +1,5 @@
+import 'dart:io';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chateo_app/core/utils/generate_chat_id.dart';
 import 'package:chateo_app/core/utils/normalize_phone_number.dart';
 import 'package:chateo_app/core/utils/show_snackbar.dart';
@@ -11,6 +13,7 @@ import 'package:chateo_app/init_dependencies.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
 
 class ChatPage extends StatefulWidget {
   final ChatContactModel chatContact;
@@ -24,6 +27,20 @@ class _ChatPageState extends State<ChatPage> {
   final formKey = GlobalKey<FormState>();
   final TextEditingController messageController = TextEditingController();
   final FocusNode messageFocusNode = FocusNode();
+
+  Future<void> pickImage(BuildContext context) async {
+    final senderPhoneNumber = getIt<AuthLocalRepository>().getPhoneNumber();
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null && context.mounted) {
+      context.read<ChatsCubit>().sendImageMessage(
+        imageFile: File(pickedFile.path),
+        senderId: normalizePhoneNumber(senderPhoneNumber),
+        receiverId: normalizePhoneNumber(widget.chatContact.phoneNumber),
+      );
+    }
+  }
 
   @override
   void initState() {
@@ -82,7 +99,18 @@ class _ChatPageState extends State<ChatPage> {
                         itemBuilder: (context, index) {
                           final message = messages[index];
 
-                          return Text(message.message);
+                          if (message.messageType == MessageEnum.text) {
+                            return Text(message.message);
+                          } else {
+                            return CachedNetworkImage(
+                              imageUrl: message.message,
+                              height: 200,
+                              width: 200,
+                              fit: BoxFit.cover,
+                              errorWidget: (context, url, error) =>
+                                  const Icon(Icons.error),
+                            );
+                          }
                         },
                       );
                     } else {
@@ -110,6 +138,11 @@ class _ChatPageState extends State<ChatPage> {
                       ),
                     ),
                     const SizedBox(width: 16),
+                    IconButton(
+                      onPressed: () => pickImage(context),
+                      icon: const Icon(Icons.attach_file),
+                    ),
+                    const SizedBox(width: 8),
                     CircleAvatar(
                       child: IconButton(
                         onPressed: () {
@@ -121,6 +154,7 @@ class _ChatPageState extends State<ChatPage> {
                                   widget.chatContact.phoneNumber,
                                 ),
                                 message: messageController.text.trim(),
+                                messageType: MessageEnum.text,
                                 createdAt: Timestamp.now(),
                               ),
                             );

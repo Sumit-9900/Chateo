@@ -1,6 +1,8 @@
+import 'dart:io';
 import 'package:chateo_app/core/constants/app_constants.dart';
 import 'package:chateo_app/core/failure/app_failure.dart';
 import 'package:chateo_app/core/utils/generate_chat_id.dart';
+import 'package:chateo_app/core/utils/upload_image_to_cloudinary.dart';
 import 'package:chateo_app/features/chats/models/message_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:chateo_app/features/chats/models/chat_conversation_model.dart';
@@ -8,6 +10,11 @@ import 'package:dartz/dartz.dart';
 
 abstract interface class ChatsRemoteRepository {
   Future<Either<AppFailure, void>> sendMessage({required MessageModel message});
+  Future<Either<AppFailure, void>> sendImageMessage({
+    required File imageFile,
+    required String senderId,
+    required String receiverId,
+  });
   Stream<Either<AppFailure, List<MessageModel>>> getAllMessages({
     required String chatId,
   });
@@ -52,6 +59,30 @@ class ChatsRemoteRepositoryImpl implements ChatsRemoteRepository {
       await batch.commit();
 
       return right(null);
+    } catch (e) {
+      return left(AppFailure(message: e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<AppFailure, void>> sendImageMessage({
+    required File imageFile,
+    required String senderId,
+    required String receiverId,
+  }) async {
+    try {
+      final chatId = generateChatId(senderId, receiverId);
+      final imageUrl = await uploadImageToCloudinary(imageFile, chatId);
+
+      final message = MessageModel(
+        senderId: senderId,
+        receiverId: receiverId,
+        message: imageUrl,
+        messageType: MessageEnum.image,
+        createdAt: Timestamp.now(),
+      );
+
+      return sendMessage(message: message);
     } catch (e) {
       return left(AppFailure(message: e.toString()));
     }

@@ -8,8 +8,8 @@ class AppTheme {
     colorScheme: ColorScheme.light(
       primary: AppColors.primary,
       onPrimary: Colors.white,
-      background: AppColors.background,
-      onBackground: AppColors.textPrimary,
+      surface: AppColors.background,
+      onSurface: AppColors.textPrimary,
     ),
     scaffoldBackgroundColor: AppColors.background,
     bottomNavigationBarTheme: BottomNavigationBarThemeData(
