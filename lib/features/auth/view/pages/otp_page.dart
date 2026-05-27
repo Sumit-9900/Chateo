@@ -151,14 +151,14 @@ class _OtpPageState extends State<OtpPage> {
                 style: TextButton.styleFrom(
                   foregroundColor: canResend
                       ? AppColors.primary
-                      : AppColors.primary.withOpacity(0.5),
+                      : AppColors.primary.withValues(alpha: 0.5),
                 ),
                 child: Text(
                   canResend ? 'Resend Code' : 'Resend Code in ${resendTimer}s',
                   style: AppTheme.lightTheme.textTheme.labelLarge!.copyWith(
                     color: canResend
                         ? AppColors.primary
-                        : AppColors.primary.withOpacity(0.5),
+                        : AppColors.primary.withValues(alpha: 0.5),
                   ),
                 ),
               ),

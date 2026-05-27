@@ -24,7 +24,7 @@ class ContactItem extends StatelessWidget {
     final dynamic contact = isMatched ? matchedContact : inviteContact;
     return ListTile(
       leading: CircleAvatar(
-        backgroundColor: AppColors.primary.withOpacity(0.8),
+        backgroundColor: AppColors.primary.withValues(alpha: 0.8),
         child: Text(
           contact.name.isNotEmpty ? contact.name[0].toUpperCase() : '?',
           style: const TextStyle(color: Colors.white),
