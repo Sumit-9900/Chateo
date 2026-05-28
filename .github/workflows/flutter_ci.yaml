@@ -62,3 +62,67 @@ jobs:
         with:
           name: release-apk
           path: build/app/outputs/flutter-apk/app-release.apk  
+
+      - name: Send Success Email
+        if: success()
+        uses: dawidd6/action-send-mail@v17
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          secure: true
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          subject: GitHub Actions Success ${{ github.repository }}
+          to: ${{ secrets.EMAIL_USERNAME }}
+          from: GitHub Actions
+          body: |
+            ✅ CI/CD WORKFLOW COMPLETED SUCCESSFULLY
+
+            Project: Chateo
+            Runner: ubuntu-latest
+            Repository: ${{ github.repository }}
+            Branch: ${{ github.ref_name }}
+
+            ✔ Formatting Check Passed
+            ✔ Linting Passed
+            ✔ Static Analysis Passed
+            ✔ Build Completed Successfully
+
+            🚀 Application is ready for deployment.
+
+            Regards,
+            GitHub Actions CI/CD Pipeline
+
+      - name: Send Failure Email
+        if: failure()
+        uses: dawidd6/action-send-mail@v17
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          secure: true
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          subject: ❌ GitHub Actions Failed - ${{ github.repository }}
+          to: ${{ secrets.EMAIL_USERNAME }}
+          from: GitHub Actions
+          body: |
+            ❌ CI/CD WORKFLOW FAILED
+
+            Project: Chateo
+            Runner: ubuntu-latest
+            Repository: ${{ github.repository }}
+            Branch: ${{ github.ref_name }}
+
+            ⚠ One or more workflow steps failed.
+
+            Possible Failure Areas:
+            - Formatting Check
+            - Linting
+            - Static Analysis
+            - Tests
+            - Build Process
+
+            🔍 Please review the GitHub Actions logs for detailed error information.
+
+            Regards,
+            GitHub Actions CI/CD Pipeline      
