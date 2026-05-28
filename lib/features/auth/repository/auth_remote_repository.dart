@@ -106,7 +106,7 @@ class AuthRemoteRepositoryImpl implements AuthRemoteRepository {
     try {
       final userId = generateUserId(phoneNumber);
       String imageUrl = '';
-      
+
       // Only attempt to upload if profileImage is not null and not empty
       if (profileImage != null && profileImage.isNotEmpty) {
         imageUrl = await uploadImageToCloudinary(File(profileImage), userId);

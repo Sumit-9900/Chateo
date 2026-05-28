@@ -33,7 +33,7 @@ class AuthLocalRepositoryImpl extends AuthLocalRepository {
   @override
   Future<void> setPhoneNumber(String phoneNumber) async {
     try {
-      print('setPhoneNumber: $phoneNumber');
+      // print('setPhoneNumber: $phoneNumber');
       await sharedPreferences.setString(
         AppConstants.phoneNumberKey,
         phoneNumber,

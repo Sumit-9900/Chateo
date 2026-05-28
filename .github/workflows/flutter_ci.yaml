@@ -1,0 +1,128 @@
+name: Flutter CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps: 
+      - name: Checkout Repository
+        uses: actions/checkout@v6  
+
+      - name: Set up Java
+        uses: actions/setup-java@v5
+        with: 
+          distribution: temurin
+          java-version: 21
+          
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2  
+        with:
+          flutter-version: 3.41.9
+          channel: stable
+          cache: true
+
+      - name: Flutter Version
+        run: flutter --version
+
+      - name: Create .env File
+        run: |
+          echo "FIREBASE_API_KEY=${{ secrets.FIREBASE_API_KEY }}" >> .env
+          echo "FIREBASE_APP_ID=${{ secrets.FIREBASE_APP_ID }}" >> .env
+          echo "FIREBASE_MESSAGING_SENDER_ID=${{ secrets.FIREBASE_MESSAGING_SENDER_ID }}" >> .env
+          echo "FIREBASE_PROJECT_ID=${{ secrets.FIREBASE_PROJECT_ID }}" >> .env
+          echo "FIREBASE_STORAGE_BUCKET=${{ secrets.FIREBASE_STORAGE_BUCKET }}" >> .env
+
+
+      - name: Install Dependencies
+        run: flutter pub get
+        
+      - name: Check Formatting
+        run: dart format --output=none --set-exit-if-changed .
+
+      - name: Analyze Project Source
+        run: flutter analyze
+        
+    #   - name: Run Tests
+    #     run: flutter test
+        
+      - name: Build APK
+        run: flutter build apk --release
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-apk
+          path: build/app/outputs/flutter-apk/app-release.apk  
+
+      - name: Send Success Email
+        if: success()
+        uses: dawidd6/action-send-mail@v17
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          secure: true
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          subject: GitHub Actions Success ${{ github.repository }}
+          to: ${{ secrets.EMAIL_USERNAME }}
+          from: GitHub Actions <${{ secrets.EMAIL_USERNAME }}>
+          body: |
+            ✅ CI/CD WORKFLOW COMPLETED SUCCESSFULLY
+
+            Project: Chateo
+            Runner: ubuntu-latest
+            Repository: ${{ github.repository }}
+            Branch: ${{ github.ref_name }}
+
+            ✔ Formatting Check Passed
+            ✔ Linting Passed
+            ✔ Static Analysis Passed
+            ✔ Build Completed Successfully
+
+            🚀 Application is ready for deployment.
+
+            Regards,
+            GitHub Actions CI/CD Pipeline
+
+      - name: Send Failure Email
+        if: failure()
+        uses: dawidd6/action-send-mail@v17
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          secure: true
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          subject: ❌ GitHub Actions Failed - ${{ github.repository }}
+          to: ${{ secrets.EMAIL_USERNAME }}
+          from: GitHub Actions <${{ secrets.EMAIL_USERNAME }}>
+          body: |
+            ❌ CI/CD WORKFLOW FAILED
+
+            Project: Chateo
+            Runner: ubuntu-latest
+            Repository: ${{ github.repository }}
+            Branch: ${{ github.ref_name }}
+
+            ⚠ One or more workflow steps failed.
+
+            Possible Failure Areas:
+            - Formatting Check
+            - Linting
+            - Static Analysis
+            - Tests
+            - Build Process
+
+            🔍 Please review the GitHub Actions logs for detailed error information.
+
+            Regards,
+            GitHub Actions CI/CD Pipeline      
